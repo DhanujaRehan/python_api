@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify , request
 from flask_sqlalchemy import SQLAlchemy #ORM
 
 app = Flask(__name__)
@@ -9,12 +9,28 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///travel.db"
 
 db = SQLAlchemy(app)
 
+class Destination(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    destination = db.Column(db.String(50), nullable=False)
+    country = db.Column(db.String(50), nullable=False)
+    rating = db.Column(db.Float , nullable=False)
+    
+    def to_dict(self):
+        return{
+            "id" :self.id,
+            "destination" : self.destination,
+            "country" : self.country,
+            "rating" : self.rating
+        }
+        
+with app.app_context():
+    db.create_all()
 
 #Create routers
 
 @app.route("/")
 def home():
-    return "hello"
+    return jsonify({"message": "Welcome to the Travel API!"})
 
 #http:/www.thenerdbook.io/
 
